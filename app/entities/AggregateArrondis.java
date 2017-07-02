@@ -10,13 +10,15 @@ import java.util.List;
 public class AggregateArrondis {
 
     private Double total;
+    private String currency_code;
     private List<String> accounts;
 
     public AggregateArrondis(){}
 
-    public AggregateArrondis(Double total, List<String> accounts) {
+    public AggregateArrondis(Double total, String currency_code, List<String> accounts) {
         this.total = total;
         this.accounts = accounts;
+        this.currency_code = currency_code;
     }
 
     public Double getTotalArrondis() {
@@ -33,5 +35,13 @@ public class AggregateArrondis {
 
     public void setAccounts(List<String> accounts) {
         this.accounts = accounts;
+    }
+
+    public String getCurrency_code() {
+        return currency_code;
+    }
+
+    public void setCurrency_code(String currency_code) {
+        this.currency_code = currency_code;
     }
 }

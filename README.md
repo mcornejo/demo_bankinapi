@@ -39,7 +39,7 @@ This API provides two REST API:
 To run the project, just open the terminal and run:
 
 ```bash
-$ cd challenge
+$ cd demo_bankinapi
 $ sbt run
 ```
 
@@ -56,10 +56,12 @@ An example response would be:
 ```json
 [{
 	"arrondis": 1.51,
+	"currency_code":"EUR",
 	"amount": -138.49,
 	"transaction_id": 38000003650888
 }, {
 	"arrondis": 3.63,
+	"currency_code":"EUR"
 	"amount": -26.38,
 	"transaction_id": 38000003650892
 }, ... ]
@@ -74,8 +76,17 @@ To retrieve the aggregation:
 An example response for the aggregated data would be:
 ```json
 {
-	"accounts": ["user@mail.com"],
-	"totalArrondis": 120.12
+	[{
+			"currency_code": "EUR",
+			"accounts": ["user1@mail.com"],
+			"totalArrondis": 123.12
+		},
+		{
+			"currency_code": "USD",
+			"accounts": ["user1@mail.com"],
+			"totalArrondis": 42.12
+		}
+	]
 }
 ```
 
@@ -87,7 +98,7 @@ To run the tests, open a terminal and run:
 To run the project, just open the folder and run:
 
 ```bash
-$ cd challenge
+$ cd demo_bankinapi
 $ sbt test
 ```
 

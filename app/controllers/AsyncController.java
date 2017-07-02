@@ -19,6 +19,8 @@ import java.util.concurrent.*;
 import akka.actor.Scheduler;
 
 import java.util.concurrent.CompletionStage;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import scala.concurrent.ExecutionContext;
@@ -95,11 +97,22 @@ public class AsyncController extends Controller {
          */
         List<Transaction> collectedTransactions = mergeTransactions(allTransactions);
 
+        /* Get the currencies */
+        List<String> currencies = collectedTransactions.stream()
+                .filter(distinctByKey(p -> p.getCurrency_code()))
+                .map(t -> t.getCurrency_code())
+                .collect(toList());
+
+        List<Arrondis> arrondis = currencies.stream()
+                .flatMap(currency -> getArrondis(collectedTransactions, currency).stream())
+                .collect(toList());
+
+        //List<Arrondis> arrondis = getArrondis(collectedTransactions))
         /*
          * After having all the transactions merged in collectedTransactions, the arrondis is computed
          * for all the list, then it is converted to Json and returned to the client.
          */
-        return CompletableFuture.completedFuture(ok(Json.toJson(getArrondis(collectedTransactions))));
+        return CompletableFuture.completedFuture(ok(Json.toJson(arrondis)));
 
         /*
         // To return just the list of arrondis
@@ -157,15 +170,25 @@ public class AsyncController extends Controller {
         /*
          * All the transactions are map/reduced to get the total of the arrondis.
          */
-        Double total = getArrondis(collectedTransactions).stream()
-                .map(e -> e.getArrondis())
-                .reduce(0.0, (a,b) -> a + b);
+
+        List<String> currencies = collectedTransactions.stream()
+                .filter(distinctByKey(p -> p.getCurrency_code()))
+                .map(t -> t.getCurrency_code())
+                .collect(toList());
+
+        List<AggregateArrondis> allArrondis = currencies.stream()
+                .map(currency -> {
+                            List<Arrondis> arrondis = getArrondis(collectedTransactions, currency);
+                            Double total = arrondis.stream().map(e-> e.getArrondis()).reduce(0.0, (a,b) -> a+b);
+                            List<String> curr_users = users.stream().map(u -> u.getEmail()).collect(toList());
+                            return new AggregateArrondis(total, currency, curr_users);
+                        })
+                .collect(toList());
 
         /*
          * Once the total is already computed, the output is formatted: total + users email.
          */
-        AggregateArrondis aggregated = new AggregateArrondis(total, users.stream().map(u -> u.getEmail()).collect(toList()));
-        return CompletableFuture.completedFuture(ok(Json.toJson(aggregated)));
+        return CompletableFuture.completedFuture(ok(Json.toJson(allArrondis)));
     }
 
 
@@ -209,10 +232,10 @@ public class AsyncController extends Controller {
     * filter the arrondis equal to cero
     * Finally it collects all the Arrondis objets to a list.
     * */
-    private List<Arrondis> getArrondis(List<Transaction> transactions) {
+    private List<Arrondis> getArrondis(List<Transaction> transactions, String currencyCode) {
         return transactions.parallelStream()
-                .filter(transaction -> transaction.getAmount() < 0)
-                .map(transaction ->  new Arrondis(calculateArrondis(transaction.getAmount()), transaction.getId(), transaction.getAmount()))
+                .filter(transaction -> transaction.getAmount() < 0 && transaction.getCurrency_code().equals(currencyCode))
+                .map(transaction ->  new Arrondis(calculateArrondis(transaction.getAmount()), transaction.getId(), transaction.getAmount(), currencyCode))
                 .filter(arrondis -> arrondis.getArrondis() > 0)
                 .collect(toList());
     }
@@ -308,5 +331,12 @@ public class AsyncController extends Controller {
                     return res;
                 });
     }
+
+
+    private <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Map<Object,Boolean> seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
 
 }

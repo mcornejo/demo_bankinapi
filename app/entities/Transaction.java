@@ -32,6 +32,7 @@ public class Transaction {
     private String description;
     private String raw_description;
     private Double amount;
+    private String currency_code;
     private String date;
     private String updated_at;
     private Boolean is_deleted;
@@ -104,21 +105,23 @@ public class Transaction {
         return resource_type;
     }
 
+    public String getCurrency_code() {
+        return currency_code;
+    }
+
+    public void setCurrency_code(String currency_code) {
+        this.currency_code = currency_code;
+    }
 
     @Override
     public String toString() {
         return "Transaction{" +
                 "id=" + id +
-                ", description='" + description + '\'' +
-                ", raw_description='" + raw_description + '\'' +
+                ", currency=" + currency_code +
                 ", amount=" + amount +
                 ", date='" + date + '\'' +
-                ", updated_at='" + updated_at + '\'' +
                 ", is_deleted=" + is_deleted +
-                ", category=" + category +
                 ", account=" + account +
-                ", resource_uri='" + resource_uri + '\'' +
-                ", resource_type='" + resource_type + '\'' +
                 '}';
     }
 }

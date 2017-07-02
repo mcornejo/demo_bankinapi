@@ -8,13 +8,15 @@ package entities;
 public class Arrondis {
 
     private Double arrondis;
+    private String currency_code;
     private Long transactionId;
     private Double amount;
 
-    public Arrondis(Double arrondis, Long transactionId, Double amount) {
+    public Arrondis(Double arrondis, Long transactionId, Double amount, String currency_code) {
         this.arrondis = arrondis;
         this.transactionId = transactionId;
         this.amount = amount;
+        this.currency_code = currency_code;
     }
 
     public Double getArrondis() {
@@ -31,5 +33,13 @@ public class Arrondis {
 
     public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    public String getCurrency_code() {
+        return currency_code;
+    }
+
+    public void setCurrency_code(String currency_code) {
+        this.currency_code = currency_code;
     }
 }

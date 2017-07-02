@@ -61,10 +61,10 @@ An example response would be:
 	"transaction_id": 38000003650888
 }, {
 	"arrondis": 3.63,
-	"currency_code":"EUR"
+	"currency_code":"EUR",
 	"amount": -26.38,
 	"transaction_id": 38000003650892
-}, ... ]
+} ]
 ```
 
 To retrieve the aggregation:

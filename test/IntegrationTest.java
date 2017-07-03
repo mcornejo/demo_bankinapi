@@ -54,7 +54,7 @@ public class IntegrationTest {
     public void testAggregationNone() {
         running(testServer(3333, fakeApplication()), HTMLUNIT, browser -> {
             browser.goTo("http://localhost:3333/aggregateArrondis/2010-01-01/2010-01-02");
-            assertTrue(browser.pageSource().contains("\"totalArrondis\":0.0"));
+            assertTrue(browser.pageSource().contains("[]"));
         });
     }
 

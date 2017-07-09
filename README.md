@@ -101,4 +101,4 @@ $ sbt test
 ```
 
 ## Documentation
-Classes and code contains its own comments explaning how they work.
+Classes and code contains its own comments explaining how they work.

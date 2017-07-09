@@ -19,7 +19,7 @@ Once the query is resolved, the data collected is stored in different classes:
 - `BankinResource`: Represents a `resource` object of Bankin API.
 - `Pagination`: Represents the pagination information of each page.
 - `User`: Represents a user, with its username and password.
-- `BankinAPIDB` and `UserDB`: Represent a storage for the crendentials.
+- `BankinAPIDB` and `UserDB`: Represent a storage for the credentials.
 
 Once the information was retrieved and stored in objects, it follows the next_uri to process 
 the next page. This process is done until the last page is rendered.
